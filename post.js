@@ -7,8 +7,23 @@ import config from './config.js'
 import { getFolderSize } from './util.js'
 
 async function run() {
+  await cleanupCredentials()
   await saveCaches()
   process.exit(0)
+}
+
+function cleanupCredentials() {
+  const credentialsPath = core.getState('google-credentials-path')
+  if (credentialsPath && credentialsPath.length > 0) {
+    try {
+      if (fs.existsSync(credentialsPath)) {
+        fs.unlinkSync(credentialsPath)
+        core.debug(`Deleted Google credentials file: ${credentialsPath}`)
+      }
+    } catch (error) {
+      core.warning(`Failed to delete Google credentials file: ${error.message}`)
+    }
+  }
 }
 
 async function saveCaches() {

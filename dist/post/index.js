@@ -104063,8 +104063,23 @@ function lstatSync(path, opts) {
 
 
 async function run() {
+  await cleanupCredentials()
   await saveCaches()
   process.exit(0)
+}
+
+function cleanupCredentials() {
+  const credentialsPath = getState('google-credentials-path')
+  if (credentialsPath && credentialsPath.length > 0) {
+    try {
+      if (external_fs_namespaceObject.existsSync(credentialsPath)) {
+        external_fs_namespaceObject.unlinkSync(credentialsPath)
+        core_debug(`Deleted Google credentials file: ${credentialsPath}`)
+      }
+    } catch (error) {
+      warning(`Failed to delete Google credentials file: ${error.message}`)
+    }
+  }
 }
 
 async function saveCaches() {

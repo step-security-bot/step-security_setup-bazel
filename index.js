@@ -1,4 +1,5 @@
 import fs from 'fs'
+import crypto from 'crypto'
 import { setTimeout } from 'timers/promises'
 import * as core from '@actions/core'
 import * as cache from '@actions/cache'
@@ -84,6 +85,16 @@ async function setupBazelisk() {
   core.endGroup()
 }
 
+async function verifyChecksum(filePath, expectedHash) {
+  const fileContent = fs.readFileSync(filePath)
+  const actualHash = crypto.createHash('sha256').update(fileContent).digest('hex')
+  if (actualHash !== expectedHash) {
+    core.warning(`Checksum mismatch for Bazelisk. Expected ${expectedHash}, got ${actualHash}`)
+  } else {
+    core.debug(`Checksum verified for Bazelisk`)
+  }
+}
+
 async function downloadBazelisk() {
   const version = config.bazeliskVersion
   core.debug(`Attempting to download ${version}`)
@@ -128,9 +139,24 @@ async function downloadBazelisk() {
     throw new Error(`Unable to find Bazelisk version ${version} for platform ${platform}/${arch}`)
   }
 
+  const checksumAsset = release.assets.find((a) => a.name == `${filename}.sha256`)
+  if (!checksumAsset) {
+    core.warning(`Checksum file not found for Bazelisk ${version}. Proceeding without verification.`)
+  }
+
   const url = asset.browser_download_url
   core.debug(`Downloading from ${url}`)
   const downloadPath = await tc.downloadTool(url, undefined, `token ${token}`)
+
+  if (checksumAsset) {
+    const checksumUrl = checksumAsset.browser_download_url
+    core.debug(`Downloading checksum from ${checksumUrl}`)
+    const checksumPath = await tc.downloadTool(checksumUrl, undefined, `token ${token}`)
+    const checksumContent = fs.readFileSync(checksumPath, 'utf8').trim()
+    const expectedHash = checksumContent.split(' ')[0]
+    await verifyChecksum(downloadPath, expectedHash)
+    fs.unlinkSync(checksumPath)
+  }
 
   core.debug('Adding to the cache...');
   fs.chmodSync(downloadPath, '755');

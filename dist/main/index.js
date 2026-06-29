@@ -55567,6 +55567,8 @@ __nccwpck_require__.d(common_utils_namespaceObject, {
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(9896);
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __nccwpck_require__(6982);
 ;// CONCATENATED MODULE: external "timers/promises"
 const promises_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("timers/promises");
 ;// CONCATENATED MODULE: external "os"
@@ -55699,8 +55701,6 @@ function escapeProperty(s) {
         .replace(/,/g, '%2C');
 }
 //# sourceMappingURL=command.js.map
-// EXTERNAL MODULE: external "crypto"
-var external_crypto_ = __nccwpck_require__(6982);
 ;// CONCATENATED MODULE: ./node_modules/@actions/core/lib/file-command.js
 // For internal use, subject to change.
 // We use any as a valid input type
@@ -116384,6 +116384,7 @@ axios.default = axios;
 
 
 
+
 async function validateSubscription() {
   let repoPrivate;
   const eventPath = process.env.GITHUB_EVENT_PATH;
@@ -116460,6 +116461,16 @@ async function setupBazelisk() {
   endGroup()
 }
 
+async function verifyChecksum(filePath, expectedHash) {
+  const fileContent = external_fs_.readFileSync(filePath)
+  const actualHash = external_crypto_.createHash('sha256').update(fileContent).digest('hex')
+  if (actualHash !== expectedHash) {
+    warning(`Checksum mismatch for Bazelisk. Expected ${expectedHash}, got ${actualHash}`)
+  } else {
+    core_debug(`Checksum verified for Bazelisk`)
+  }
+}
+
 async function downloadBazelisk() {
   const version = config.bazeliskVersion
   core_debug(`Attempting to download ${version}`)
@@ -116504,9 +116515,24 @@ async function downloadBazelisk() {
     throw new Error(`Unable to find Bazelisk version ${version} for platform ${platform}/${arch}`)
   }
 
+  const checksumAsset = release.assets.find((a) => a.name == `${filename}.sha256`)
+  if (!checksumAsset) {
+    warning(`Checksum file not found for Bazelisk ${version}. Proceeding without verification.`)
+  }
+
   const url = asset.browser_download_url
   core_debug(`Downloading from ${url}`)
   const downloadPath = await downloadTool(url, undefined, `token ${token}`)
+
+  if (checksumAsset) {
+    const checksumUrl = checksumAsset.browser_download_url
+    core_debug(`Downloading checksum from ${checksumUrl}`)
+    const checksumPath = await downloadTool(checksumUrl, undefined, `token ${token}`)
+    const checksumContent = external_fs_.readFileSync(checksumPath, 'utf8').trim()
+    const expectedHash = checksumContent.split(' ')[0]
+    await verifyChecksum(downloadPath, expectedHash)
+    external_fs_.unlinkSync(checksumPath)
+  }
 
   core_debug('Adding to the cache...');
   external_fs_.chmodSync(downloadPath, '755');
