@@ -14,12 +14,10 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        os:
-          - macos
-          - ubuntu
-          - windows
+        os: ${{ github.actor == 'dependabot[bot]' && fromJSON('["ubuntu"]') || fromJSON('["ubuntu", "macos", "windows"]') }}
+
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3

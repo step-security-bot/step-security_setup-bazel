@@ -8,7 +8,7 @@ and provides an advanced fine-grained caching to improve workflows performance.
 ## Usage
 
 ```yaml
-- uses: step-security/setup-bazel@0.19.0
+- uses: step-security/setup-bazel@v0
   with:
     # Avoid downloading Bazel every time.
     bazelisk-cache: true
@@ -41,7 +41,7 @@ Default `""`.
   #### Install Bazelisk 1.x
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       bazelisk-version: 1.x
   ```
@@ -49,7 +49,7 @@ Default `""`.
   #### Install exact Bazelisk version
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       bazelisk-version: 1.19.0
   ```
@@ -69,7 +69,7 @@ Default `""`.
   #### Enable Bzlmod
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       bazelrc: common --enable_bzlmod
   ```
@@ -77,7 +77,7 @@ Default `""`.
   #### Add colors and timestamps
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       bazelrc: |
         build --color=yes
@@ -100,7 +100,7 @@ Default `true`.
   #### Disable cache saving on pull requests
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       bazelisk-cache: true
       disk-cache: ${{ github.workflow }}
@@ -123,7 +123,7 @@ Default `false`.
   #### Share a single disk cache
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       disk-cache: true
   ```
@@ -131,7 +131,7 @@ Default `false`.
   #### Separate disk caches between workflows
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       disk-cache: ${{ github.workflow }}
   ```
@@ -155,7 +155,7 @@ Default `false`.
   #### Enable external repositories caches
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       external-cache: true
   ```
@@ -163,7 +163,7 @@ Default `false`.
   #### Cache NPM repositories based on `package-lock.json` contents
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       external-cache: |
         manifest:
@@ -173,7 +173,7 @@ Default `false`.
   #### Do not cache Ruby on Windows
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       external-cache: |
         manifest:
@@ -193,7 +193,7 @@ Default `""`.
   #### Authenticate via key
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       google-credentials: ${{ secrets.GOOGLE_CLOUD_KEY }}
   ```
@@ -224,7 +224,7 @@ Default is one of the following:
   #### Use `C` drive letter
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       output-base: C:/_bazel
   ```
@@ -244,7 +244,7 @@ Default `false`.
   #### Store a single repository cache
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       repository-cache: true
   ```
@@ -252,14 +252,14 @@ Default `false`.
   #### Store a repository cache from a custom location
 
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       repository-cache: examples/gem/WORKSPACE
   ```
 
   #### Store a repository cache from a list of custom locations
   ```yaml
-  - uses: step-security/setup-bazel@0.19.0
+  - uses: step-security/setup-bazel@v0
     with:
       repository-cache: |
         - MODULE.bazel
@@ -267,33 +267,11 @@ Default `false`.
   ```
 </details>
 
-## Migrating from [`bazelbuild/setup-bazelisk`][6]
-
-You can simply replace `bazelbuild/setup-bazelisk` action with `step-security/setup-bazel`.
-However, if you used a `bazel-version` input before, you will need to remove it in favor
-[other ways to specify Bazel version][7].
-
-## Development
-
-To build action, run the following command:
-
-```sh
-$ npm install
-$ npm run build
-```
-
-## Release
-
-Use [Release][10] workflow to cut a new release.
-
-
 [1]: https://github.com/bazelbuild/bazelisk
 [2]: https://bazel.build/remote/caching#disk-cache
 [3]: https://docs-staging.bazel.build/2338/versions/main/guide.html#the-repository-cache
 [4]: https://bazel.build/run/bazelrc
 [5]: https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-[6]: https://github.com/bazelbuild/setup-bazelisk
 [7]: https://github.com/bazelbuild/bazelisk/blob/master/README.md#how-does-bazelisk-know-which-bazel-version-to-run
 [8]: https://github.com/actions/runner-images/pull/490
 [9]: https://bazel.build/reference/command-line-reference#flag--google_credentials
-[10]: https://github.com/step-security/setup-bazel/actions/workflows/release.yml

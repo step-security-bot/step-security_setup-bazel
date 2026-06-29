@@ -16,6 +16,10 @@ on:
         description: "Run mode: cherry-pick or verify"
         required: false
         default: "cherry-pick"
+      node_version:
+        description: "Node.js version to use"
+        required: false
+        default: "24"
 
   pull_request:
     types: [ opened, synchronize, labeled ]
@@ -35,3 +39,4 @@ jobs:
       repo-name: "setup-bazel"
       base_branch: ${{ inputs.base_branch || 'main' }}
       mode: ${{ github.event_name == 'pull_request' && 'verify' || inputs.mode || 'cherry-pick' }}
+      node_version: ${{ inputs.node_version || '24' }}
