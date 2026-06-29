@@ -1,0 +1,25 @@
+{
+  "name": "setup-bazel",
+  "version": "0.19.0",
+  "description": "Install and configure Bazel for GitHub Actions",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "ncc build index.js -s -o dist/main && ncc build post.js -s -o dist/post",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alex Rodionov <p0deje@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/cache": "^6.0.0",
+    "@actions/core": "^3.0.0",
+    "@actions/github": "^9.0.0",
+    "@actions/glob": "^0.7.0",
+    "@actions/tool-cache": "^4.0.0",
+    "@vercel/ncc": "^0.38.0",
+    "yaml": "^2.2.1"
+  }
+}

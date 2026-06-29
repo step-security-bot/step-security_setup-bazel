@@ -1,0 +1,61 @@
+name: Setup Bazel environment
+description: Setup a Bazel environment, including Bazelisk and fine-grained caching
+
+inputs:
+  bazelisk-cache:
+    description: Caches Bazelisk downloads based on .bazelversion
+    required: false
+    default: "false"
+  bazelisk-version:
+    description: The Bazelisk version to download and use if necessary
+    default: ""
+  bazelrc:
+    description: Extra contents to write to user .bazelrc
+    required: false
+    default: ""
+  cache-save:
+    description: Whether to save caches. Set to false for pull requests to allow restores but prevent saves.
+    required: false
+    default: "true"
+  cache-version:
+    description: Version of all caches
+    required: false
+    default: "1"
+  disk-cache:
+    description: Cache actions outputs based on BUILD
+    required: false
+    default: "false"
+  external-cache:
+    description: Cache external 10MB+ repositories based on MODULE.bazel/WORKSPACE
+    required: false
+    default: ""
+  google-credentials:
+    description: Google Cloud account key for remote cache
+    required: false
+    default: ""
+  module-root:
+    description: Bazel module root directory. Default is `.`
+    required: false
+    default: "."
+  output-base:
+    description: Bazel output base directory. Default is $HOME/.cache/bazel (POSIX) or D:/_bazel (Windows)
+    required: false
+    default: ""
+  repository-cache:
+    description: Cache repositories based on MODULE.bazel/WORKSPACE
+    required: false
+    default: "false"
+  cache-restore-timeout:
+    description: Timeout in milliseconds for each cache restore operation (download + extraction). Set to 0 to disable.
+    required: false
+    default: "0"
+  token:
+    description: GitHub token to query Bazelisk releases
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: node24
+  main: dist/main/index.js
+  post: dist/post/index.js
+  post-if: "!cancelled()"
