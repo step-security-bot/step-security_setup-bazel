@@ -1,0 +1,23 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  setup-bazel:
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: ${{ github.actor == 'dependabot[bot]' && fromJSON('["ubuntu"]') || fromJSON('["ubuntu", "macos", "windows"]') }}
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
