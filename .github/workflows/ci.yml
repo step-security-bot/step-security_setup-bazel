@@ -17,7 +17,12 @@ jobs:
         os: ${{ github.actor == 'dependabot[bot]' && fromJSON('["ubuntu"]') || fromJSON('["ubuntu", "macos", "windows"]') }}
 
     steps:
-      - uses: actions/checkout@v7
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./
       - if: failure() && runner.debug == '1'
-        uses: mxschmitt/action-tmate@v3
+        uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113 # v3.24
