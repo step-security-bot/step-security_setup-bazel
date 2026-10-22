@@ -1,0 +1,17 @@
+{
+  "$comment": "Managed automatically when syncing with upstream. Do not edit by hand.",
+  "schema_version": 1,
+  "onboarding_type": "copied",
+  "action_type": "node",
+  "upstream": {
+    "repository": "bazel-contrib/setup-bazel",
+    "synced_tag": "0.19.1",
+    "synced_commit": "104e3eea9447cdaa4b00d0fb46191a3985d26ab3",
+    "archived": false
+  },
+  "build": {
+    "package_manager": "npm@11.12.1",
+    "node_version": "24",
+    "script": "build"
+  }
+}
