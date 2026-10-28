@@ -1,4 +1,5 @@
 name: Setup Bazel environment
+author: step-security
 description: Setup a Bazel environment, including Bazelisk and fine-grained caching
 
 inputs:
